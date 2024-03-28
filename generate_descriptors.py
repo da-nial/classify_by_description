@@ -6,7 +6,8 @@ import itertools
 
 from descriptor_strings import stringtolist
 
-openai.api_key = None #FILL IN YOUR OWN HERE
+
+# openai.api_key = None  # FILL IN YOUR OWN HERE
 
 
 def generate_prompt(category_name: str):
@@ -37,26 +38,25 @@ A: There are several useful visual features to tell there is a {category_name} i
 -
 """
 
-# generator 
+
+# generator
 def partition(lst, size):
     for i in range(0, len(lst), size):
         yield list(itertools.islice(lst, i, i + size))
-        
+
+
 def obtain_descriptors_and_save(filename, class_list):
     responses = {}
     descriptors = {}
-    
-    
-    
+
     prompts = [generate_prompt(category.replace('_', ' ')) for category in class_list]
-    
-    
+
     # most efficient way is to partition all prompts into the max size that can be concurrently queried from the OpenAI API
-    responses = [openai.Completion.create(model="text-davinci-003",
-                                            prompt=prompt_partition,
-                                            temperature=0.,
-                                            max_tokens=100,
-                                            ) for prompt_partition in partition(prompts, 20)]
+    responses = [openai.Completion.create(model="text-davinci-002",
+                                          prompt=prompt_partition,
+                                          temperature=0.,
+                                          max_tokens=100,
+                                          ) for prompt_partition in partition(prompts, 20)]
     response_texts = [r["text"] for resp in responses for r in resp['choices']]
     descriptors_list = [stringtolist(response_text) for response_text in response_texts]
     descriptors = {cat: descr for cat, descr in zip(class_list, descriptors_list)}
@@ -66,6 +66,6 @@ def obtain_descriptors_and_save(filename, class_list):
         filename += '.json'
     with open(filename, 'w') as fp:
         json.dump(descriptors, fp)
-    
 
-# obtain_descriptors_and_save('example', ["bird", "dog", "cat"])
+
+obtain_descriptors_and_save('danial', ["chef", "doctor", "pilot"])

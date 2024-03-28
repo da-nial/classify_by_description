@@ -201,3 +201,8 @@ cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,python,jupyternotebooks
 n
+
+
+./data/CUB_200_2011/*
+**/CUB_200_2011/**
+.idea
